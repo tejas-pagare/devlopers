@@ -59,7 +59,7 @@ const userSchema = mongoose.Schema({
   },
   photourl: {
     type: String,
-    default: "https://www.google.com/imgres?q=default%20photo&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F024%2F983%2F914%2Fsmall_2x%2Fsimple-user-default-icon-free-png.png&imgrefurl=https%3A%2F%2Fwww.vecteezy.com%2Ffree-png%2Fdefault-user&docid=M2luaU4BDF0eXM&tbnid=cXZg5FMbMktxwM&vet=12ahUKEwjiwMviwLuNAxW0SWwGHTegKBMQM3oECHMQAA..i&w=400&h=400&hcb=2&ved=2ahUKEwjiwMviwLuNAxW0SWwGHTegKBMQM3oECHMQAA"
+    default: "https://img.freepik.com/free-vector/illustration-businessman_53876-5856.jpg"
     ,
     trim: true,
     validate(value) {
