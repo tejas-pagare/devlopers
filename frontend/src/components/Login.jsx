@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../store/slices/user";
 import { useNavigate } from "react-router-dom";
 import { BACKEND_BASE_URL } from "../utils/constant";
+import toast from "react-hot-toast";
 function Login() {
   const {
     register,
@@ -33,14 +34,18 @@ function Login() {
       });
       return;
     }
-
-    const response = await axios.post(`${BACKEND_BASE_URL}/login`, data, {
-      withCredentials: true,
-    });
-    console.log(response);
-    dispatch(addUser(response.data.user));
-    reset();
-    navigate("/feed")
+    try {
+      const response = await axios.post(`${BACKEND_BASE_URL}/login`, data, {
+        withCredentials: true,
+      });
+      console.log(response);
+      dispatch(addUser(response.data.user));
+      reset();
+      toast.success(response.data.message)
+      navigate("/feed");
+    } catch (error) {
+      toast.error(error?.response?.data?.message||"Something went wrong");
+    }
   };
   return (
     <div className="flex item-center justify-center">
@@ -58,7 +63,7 @@ function Login() {
                 placeholder="Type here"
               />
               {errors.emailId && (
-                <p className="label">{errors.emailId.message}</p>
+                <p className="label text-red-500 tracking-tighter">{errors.emailId.message}</p>
               )}
             </fieldset>
             <fieldset className="fieldset">

@@ -4,12 +4,17 @@ const userAuth = async (req, res, next) => {
 
   try {
     const token = req?.cookies?.token;
-    if (!token) throw new Error("Invalid Token");
+    if (!token){
+      return res.status(401).json({
+        message:"Invalid Token ",
+        success:false
+      })
+    };
     const { userId } = jwt.decode(token);
 
     const user = await User.findById(userId);
     if (!user) {
-      res.status(401).json({
+      res.status(400).json({
         message: "User not found",
         success: false,
         user: null
@@ -19,7 +24,7 @@ const userAuth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).json({
+    res.status(400).json({
       message: `Error ${error.message}`,
       success: false
     })
