@@ -11,6 +11,7 @@ function Body() {
   const dispatch = useDispatch();
   const user = dispatch((store)=>store.user);
   const fetchUser = async()=>{
+    console.log("Called")
     if(user) return;
     try {
       const response = await axios.get(`${BACKEND_BASE_URL}/profile/view`,{withCredentials:true});
@@ -27,7 +28,7 @@ function Body() {
   useEffect(()=>{
    fetchUser()
     
-  },[])
+  },[]);
   return (
     <>
       <Navbar/>

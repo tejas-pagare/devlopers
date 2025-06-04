@@ -13,13 +13,13 @@ const SignUpValidator = ({ emailId, password, lastname, firstname }) => {
 }
 
 const editProfileValidation = (req) => {
-  const ALLOWED_UPDATES_FIELDS = ["lastname", "firstname", "bio", "skills", "emailId", "age", "gender"];
+  const ALLOWED_UPDATES_FIELDS = ["lastname", "firstname", "bio", "skills", "emailId", "age", "gender","photourl"];
   const isAllowedEdit = Object.keys(req.body).every((field) => ALLOWED_UPDATES_FIELDS.includes(field));
   Object.keys(req.body).every((field) => {
     if (field === "emailId") {
       if (!validator.isEmail(req.body[field])) throw new Error("Enter a valid email");
     } else if (field === "firstname") {
-      if (req.body[field].length() < 5 || req.body[field].length() > 50) {
+      if (req.body[field].length < 5 || req.body[field].length > 50) {
         throw new Error("firstname must have length between 5 and 50")
       }
     } else if (field === "bio") {
@@ -33,6 +33,10 @@ const editProfileValidation = (req) => {
     } else if (field === "gender") {
       if (!(req.body[field] === "male" || req.body[field] === "female" || req.body[field] === "other")) {
         throw new Error("Enter a valid gender")
+      }
+    }else if(field==="photourl"){
+      if(!validator.isURL(req.body[field])){
+        throw new Error("Enter a valid image url");
       }
     }
   });
