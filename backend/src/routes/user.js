@@ -51,17 +51,24 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         select: USER_SAFE_DATA
       }
     ]);
+    let MyConnection = [];
 
     loggedInUserConnections = loggedInUserConnections.map((connection) => {
-      if (connection.fromUserId === loggedInUser._id) {
-        return connection.toUserId
+      console.log(connection?.fromUserId?._id?.toString() === loggedInUser?._id?.toString())
+      if (connection?.fromUserId?._id?.toString() === loggedInUser?._id?.toString()) {
+
+        MyConnection.push(connection.toUserId);
+
+      } else {
+        MyConnection.push(connection.fromUserId)
       }
-      return connection.fromUserId
+
+
     })
     res.status(200).json({
       message: "Connection  retrieved successfully",
       data: {
-        connections: loggedInUserConnections
+        connections: MyConnection
       },
       success: true
     })
@@ -75,10 +82,10 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
 
 userRouter.get("/user/feed", userAuth, async (req, res) => {
   try {
-    const page = parseInt(req.query.page)||1;
-    let limit = parseInt(req.query.limit)||10;
-    limit = limit > 50 ? 50 :limit;
-    const skip = (page-1)*limit;
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : limit;
+    const skip = (page - 1) * limit;
     const loggedInUser = req.user;
     const myConnections = await connectionRequest.find({
       $or: [
@@ -101,7 +108,7 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
         { _id: { $ne: loggedInUser._id } }
       ]
     }).select(USER_SAFE_DATA).skip(skip).limit(limit)
-    res.status(200).json({data:myFeed,message:"Feed retired successfully",success:true})
+    res.status(200).json({ data: myFeed, message: "Feed retired successfully", success: true })
   } catch (error) {
     res.status(400).json({
       message: "Error:" + error.message,

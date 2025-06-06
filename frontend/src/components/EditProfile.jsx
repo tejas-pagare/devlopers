@@ -40,10 +40,10 @@ function EditProfile({ user }) {
       setError("firstname", { message: "Firtname should btw 5 to 100" });
     }
 
-    if (data.bio && data.bio.length < 100) {
+    if (data.bio && data.bio.length > 100) {
       isError=true;
       setError("bio", {
-        message: "firstname must have length between less than 100",
+        message: "bio must have length between less than 100",
       });
     }
 
@@ -191,7 +191,7 @@ function EditProfile({ user }) {
           </div>
         </div>
       </div>
-      <UserCard user={watched} />
+      <UserCard onClickHandler={()=>{}} user={watched} />
     </div>
   );
 }

@@ -1,13 +1,12 @@
+import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
-import validator from "validator";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { addUser } from "../store/slices/user";
-import { Link, useNavigate } from "react-router-dom";
-import { BACKEND_BASE_URL } from "../utils/constant";
 import toast from "react-hot-toast";
-function Login() {
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import validator from "validator"
+import { BACKEND_BASE_URL } from "../utils/constant";
+function Signup() {
   const {
     register,
     handleSubmit,
@@ -15,10 +14,7 @@ function Login() {
     setError,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      emailId: "Virat@gmail.com",
-      password: "Kholi@123",
-    },
+    
   });
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -35,24 +31,51 @@ function Login() {
       return;
     }
     try {
-      const response = await axios.post(`${BACKEND_BASE_URL}/login`, data, {
-        withCredentials: true,
-      });
+      const response = await axios.post(`${BACKEND_BASE_URL}/signup`, data);
       console.log(response);
-      dispatch(addUser(response.data.user));
-      reset();
-      toast.success(response.data.message)
-      navigate("/feed");
+        reset();
+      toast.success(response.data.message);
+      navigate("/login");
     } catch (error) {
-      toast.error(error?.response?.data?.message||"Something went wrong");
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
   return (
     <div className="flex item-center justify-center">
       <div className="card card-border bg-base-300 w-96">
         <div className="card-body">
-          <h2 className="card-title">Login</h2>
+          <h2 className="card-title">Signup</h2>
           <form onSubmit={handleSubmit(onSubmit)} method="post">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Enter Firstname</legend>
+              <input
+                autoComplete="true"
+                {...register("firstname")}
+                type="text"
+                className="input"
+                placeholder="Type here"
+              />
+              {errors.firstname && (
+                <p className="label text-red-500 tracking-tighter">
+                  {errors.firstname.message}
+                </p>
+              )}
+            </fieldset>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Enter Lastname</legend>
+              <input
+                autoComplete="true"
+                {...register("lastname")}
+                type="text"
+                className="input"
+                placeholder="Type here"
+              />
+              {errors.lastname && (
+                <p className="label text-red-500 tracking-tighter">
+                  {errors.lastname.message}
+                </p>
+              )}
+            </fieldset>
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Enter Email</legend>
               <input
@@ -63,7 +86,9 @@ function Login() {
                 placeholder="Type here"
               />
               {errors.emailId && (
-                <p className="label text-red-500 tracking-tighter">{errors.emailId.message}</p>
+                <p className="label text-red-500 tracking-tighter">
+                  {errors.emailId.message}
+                </p>
               )}
             </fieldset>
             <fieldset className="fieldset">
@@ -83,15 +108,15 @@ function Login() {
             </fieldset>
             <div className="flex item-center justify-center mt-2">
               <button type="submit" className="btn btn-primary">
-                Login
+                Signup
               </button>
             </div>
           </form>
-          <p>Don't have an account? <span className="text-blue-600"><Link to={'/signup'}>Signup</Link></span></p>
+          <p>Already have an account? <span className="text-blue-600"><Link to={'/login'}>Login</Link></span></p>
         </div>
       </div>
     </div>
   );
 }
 
-export default Login;
+export default Signup;
