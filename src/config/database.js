@@ -3,7 +3,7 @@ const connectDatabase = async()=>{
   try {
     //mongodb://localhost:27017
     //mongodb+srv://tejaspagare1625:tejas1625@cluster0.kgaj6d0.mongodb.net/
-   await mongoose.connect("mongodb://localhost:27017/Meet");
+   await mongoose.connect("mongodb+srv://tejaspagare1625:Tejas1625@cluster0.kgaj6d0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
    
   } catch (error) {
     console.log(error)
