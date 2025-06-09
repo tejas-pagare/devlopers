@@ -54,7 +54,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
     let MyConnection = [];
 
     loggedInUserConnections = loggedInUserConnections.map((connection) => {
-      console.log(connection?.fromUserId?._id?.toString() === loggedInUser?._id?.toString())
+     
       if (connection?.fromUserId?._id?.toString() === loggedInUser?._id?.toString()) {
 
         MyConnection.push(connection.toUserId);
