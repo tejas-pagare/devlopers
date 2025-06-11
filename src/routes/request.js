@@ -1,6 +1,6 @@
 const { userAuth } = require("../middleware/auth");
 const connectionRequest = require("../models/connectionRequest");
-
+const sendEmail = require("../utils/sendEmails")
 const User = require("../models/user");
 
 const requestRouter = require("express").Router();
@@ -25,7 +25,14 @@ requestRouter.post("/request/send/:status/:userId", userAuth, async (req, res) =
     if (isRequestExist) throw new Error(`Connection request already exist between ${req.user.firstname} and ${toUser.firstname}`);
 
     const newConnectionRequest = new connectionRequest({ fromUserId, toUserId: toUser._id, status });
-    await newConnectionRequest.save()
+    await newConnectionRequest.save();
+    if (!(status === "interested")) {
+
+      await sendEmail.run("Connection Request send", `${req.user.firstname}  ${status}  ${toUser.firstname}`);
+    } else {
+      await sendEmail.run("Connection Request send", `${req.user.firstname} is ${status} in ${toUser.firstname}`);
+    }
+
     return res.status(200).json({
       message: `Request send successfully`,
       success: true,
@@ -33,6 +40,7 @@ requestRouter.post("/request/send/:status/:userId", userAuth, async (req, res) =
     })
 
   } catch (error) {
+    console.log(error)
     res.status(400).json({
       message: `Error ${error.message}`,
       success: false
@@ -49,7 +57,7 @@ requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, r
     const isAllowedStatus = ALLOWED_STATUS.includes(status);
     if (!isAllowedStatus) throw new Error(`Invalid status type: ${status}`);
     const loggedInUser = req.user;
-    
+
     const isRequestExist = await connectionRequest.findOne({
       _id: requestId,
       toUserId: loggedInUser._id,
