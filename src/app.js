@@ -7,8 +7,10 @@ const authRouter = require("./routes/auth.js");
 const profileRouter = require("./routes/profile.js");
 const requestRouter = require("./routes/request.js");
 const userRouter = require("./routes/user.js");
+const paymentRouter = require("./routes/payments.js")
 const cors = require("cors");
 require('dotenv').config();
+require("./utils/cronJob.js");
 app.use(cors(
   {
     origin: "http://localhost:5173",
@@ -24,8 +26,9 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
+app.use("/",paymentRouter);
 app.use("/", (req, res) => {
-  res.send("404 Page Not Found");
+  res.json({message:"404 Page Not Found"});
 })
 connectDatabase()
   .then(() => {

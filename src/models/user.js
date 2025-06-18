@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
   lastname: {
     type: String,
     trim: true,
-    required:true
+    required: true
   },
   emailId: {
     type: String,
@@ -77,16 +77,30 @@ const userSchema = mongoose.Schema({
   skills: [{
     type: String,
     trim: true
-  }]
+  }],
+  isPremium: {
+    type: Boolean,
+    default: false,
+  },
+  membershipType: {
+    type: String,
+    enum: ["normal", "silver", "gold"],
+    default: "normal",
+  },
+  validityOfMembership: {
+    type: Date,
+    default: null, 
+  }
+
 }, { timestamps: true });
 
 
 userSchema.methods.getJwt = async function () {
-  const token = jwt.sign({ userId: this._id }, process.env.JWT_SECRET,{expiresIn:"7d"});
+  const token = jwt.sign({ userId: this._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
   return token
 }
 userSchema.methods.validatePassword = async function (userSendPasswprd) {
-  
+
   const passwordCheck = await bcrypt.compare(userSendPasswprd, this.password);
   return passwordCheck
 }
