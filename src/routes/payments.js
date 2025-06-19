@@ -54,10 +54,6 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 });
 
 
-paymentRouter.use(
-  "/payment/webhook",
-  bodyParser.raw({ type: "application/json" })
-);
 
 paymentRouter.post("/payment/webhook", async (req, res) => {
   try {
