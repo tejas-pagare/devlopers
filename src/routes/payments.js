@@ -54,52 +54,43 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 });
 
 
-
 paymentRouter.post("/payment/webhook", async (req, res) => {
   try {
-    const webhookSignature = req.get("X-Razorpay-Signature");
-    const rawBody = req.body; // This is a Buffer
-    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
-    console.log(webhookSignature);
-    const isValidWebhookSignature = validateWebhookSignature(JSON.stringify(rawBody), webhookSignature, secret);
-
+    
+    const webhookSignature = req.get("X-Razorpay-Signature")
+    const isValidWebhookSignature = validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET);
     console.log(isValidWebhookSignature);
-    if (!isValidWebhookSignature) throw new Error("Invalid Webhook request");
-
-    const parsedBody = JSON.parse(rawBody.toString());
-    const paymentsDetails = parsedBody?.payload?.payment?.entity;
+    const paymentsDetails = req?.body?.payload?.payment?.entity;
 
     const Order = await Order.findOne({ orderId: paymentsDetails?.order_id });
 
-    if (parsedBody.event === "payment.captured") {
-      console.log(paymentsDetails?.id, paymentsDetails?.status, Order?.userId);
+    if (!isValidWebhookSignature) throw new Error("Invalid Webhook request");
+    if (req.body.event === "payment.captured") {
+      // update the DB
+      // update paymentId
       Order.paymentId = paymentsDetails?.id;
       Order.status = paymentsDetails?.status;
-
       const user = await User.findOne({ _id: Order?.userId });
       user.membershipType = paymentsDetails?.notes?.membership;
       user.isPremium = true;
-
       const durationInMonths = paymentsDetails?.notes?.membership === "silver" ? 3 : 6;
       const validity = new Date();
       validity.setMonth(validity.getMonth() + durationInMonths);
       user.validityOfMembership = validity;
-
       await user.save();
       await Order.save();
     }
 
     res.status(200).json({
-      message: "Webhook received successfully",
+      message: "Webhook recieved successfully",
       success: true
-    });
+    })
 
   } catch (error) {
-    console.log("Webhook error:", error.message);
     res.status(400).json({
-      message: `Error: ${error.message}`,
+      message: `Error ${error.message}`,
       success: false
-    });
+    })
   }
 });
 
