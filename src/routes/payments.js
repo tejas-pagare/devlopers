@@ -60,7 +60,7 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
     const webhookBody = req?.body;
     const webhookSignature = req.headers['X-Razorpay-Signature'];
     const isValidWebhookSignature = validateWebhookSignature(JSON.stringify(webhookBody), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET);
-
+    console.log(isValidWebhookSignature);
     const paymentsDetails = req?.body?.payload?.payment?.entity;
 
     const Order = await Order.findOne({ orderId: paymentsDetails?.order_id });
